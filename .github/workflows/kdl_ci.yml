@@ -1,0 +1,39 @@
+name: kdl CI
+
+on:
+  push:
+    paths:
+      - 'vlib/**'
+      - '**/toml_ci.yml'
+      - '!**.md'
+  pull_request:
+    paths:
+      - 'vlib/**'
+      - '**/toml_ci.yml'
+      - '!**.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/master' && github.sha || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  toml-module-pass-external-test-suites:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build V
+        run: make -j4 && ./v symlink
+      - name: Install dependencies
+        run: |
+          v retry -- sudo apt update
+          v retry -- sudo apt install --quiet -y jq libgc-dev
+
+      - name: Show JQ Version
+        run: jq --version
+
+      - name: Download official KDL testsuits
+        run: .github/workflows/download_kdl_test_suites.sh
+
+      - name: Run KDL tests
+        run: ./v test vlib/kdl

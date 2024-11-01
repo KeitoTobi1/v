@@ -1,0 +1,7 @@
+{
+    "test": {
+        "array": [1, 2, 3, [true, false], {"foo": 4}],
+        "bar": 5
+    },
+    "baz": 6
+}

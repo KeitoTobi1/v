@@ -1,0 +1,7 @@
+dict baz=6 {
+    array "test" 1 2 3 {
+        array true false
+        dict foo=4
+    }
+    _ "bar" 5
+}
